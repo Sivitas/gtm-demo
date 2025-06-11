@@ -138,7 +138,24 @@ function initiateCheckout() {
 
 // Function to complete purchase
 function completePurchase() {
-    // Clear the cart
+
+  console.log(cart)
+  // send data to GTM
+  // window.dataLayer.push({
+  //   event: 'AddToCart',
+  //   ecommerce: {
+  //     currency: 'USD',
+  //     value: price,
+  //     items: {
+  //       id,
+  //       item_name: name,
+  //       price,
+  //       quantity: 1
+  //     }
+  //   }
+  // })
+
+  // Clear the cart
   cart = {}
   saveCartToLocalStorage()
   updateCartCount()
