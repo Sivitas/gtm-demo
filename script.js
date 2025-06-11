@@ -56,6 +56,8 @@ function addToCart(id, name, price) {
   updateCartCount()
   showNotification(`Added ${name} to cart!`)
   saveCartToLocalStorage()
+
+  console.log('add to cart!')
   window.dataLayer.push({
     event: 'AddToCart',
     ecommerce: {
