@@ -40,16 +40,14 @@ function addToCart(id, name, price) {
   console.log('add to cart!')
   _pushToDatalayer({
     event: 'add_to_cart',
-    ecommerce: {
-      currency: 'USD',
-      value: price,
-      items: [{
-        item_id: id,
-        item_name: name,
-        price,
-        quantity: 1
-      }]
-    }
+    currency: 'USD',
+    value: price,
+    items: [{
+      item_id: id,
+      item_name: name,
+      price,
+      quantity: 1
+    }]
   })
 }
 
@@ -129,16 +127,11 @@ function completePurchase() {
   // Clear the cart
   cart = {}
   saveCartToLocalStorage()
-  // updateCartCount()
+  updateCartCount()
 
   // Redirect to the purchase confirmation page
-  // window.location.href = 'purchase-confirmation.html'
+  window.location.href = 'purchase-confirmation.html'
 }
-
-// // Add event listener to the purchase button
-// if (document.getElementById('purchase-btn')) {
-//   document.getElementById('purchase-btn').addEventListener('click', completePurchase)
-// }
 
 function showNotification(message) {
   const notification = document.createElement('div')
