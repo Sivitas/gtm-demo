@@ -1,6 +1,13 @@
-let globalData = {}
+let globalData = {
+  name: 'John Doe',
+  email: 'johndoe@example.com',
+  address: '123 Main St',
+  city: 'Anytown',
+  state: 'CA',
+  zip: '12345'
+}
 
-document.cookie = '_fbc=fb.1.123.IwY2xjawK3G1xle'
+// document.cookie = '_fbc=fb.1.123.IwY2xjawK3G1xle'
 
 // Function to update global variables
 function updateData(key, value) {
@@ -33,16 +40,15 @@ function addToCart(id, name, price) {
   console.log('add to cart!')
   _pushToDatalayer({
     event: 'add_to_cart',
-    firstName: 'john',
     ecommerce: {
       currency: 'USD',
       value: price,
-      items: {
+      items: [{
         item_id: id,
         item_name: name,
         price,
         quantity: 1
-      }
+      }]
     }
   })
 }
@@ -115,7 +121,10 @@ function completePurchase() {
   // console.log(globalData)
 
   // send data to GTM
-  _pushToDatalayer(_formatPurchaseForDataLayer())
+  const purchaseDl = _formatPurchaseForDataLayer()
+  _injectUserDataDl(purchaseDl)
+  _pushToDatalayer(purchaseDl)
+  console.log(purchaseDl)
 
   // Clear the cart
   cart = {}
@@ -192,19 +201,25 @@ function _pushToDatalayer(data) {
   window.dataLayer.push(data)
 }
 function _formatPurchaseForDataLayer() {
-  const ecommerce = {
+  const dl = {
+    event: 'purchase',
     value: 0,
-    currenty: 'USD',
-    contents: []
+    currency: 'USD',
+    items: []
   }
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
-    ecommerce.value += data.price
-    ecommerce.contents.push({ item_id: id, item_name: name, quantity })
+    dl.value += data.price
+    dl.items.push({ item_id: id, item_name: name, quantity })
   }
 
-  return {
-    event: 'purchase',
-    ecommerce
-  }
+  return dl
+}
+function _injectUserDataDl(dl) {
+  dl.firstName = globalData.name?.split(' ')?.[0] || null
+  dl.lastName = globalData.name?.split(' ')?.[1] || null
+  dl.email = globalData.email
+  dl.city = globalData.city
+  dl.state = globalData.state
+  dl.zip = globalData.zip
 }
