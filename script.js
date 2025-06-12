@@ -2,37 +2,43 @@
 let userEmail = ''
 let userCity = ''
 let userZip = ''
+
+let globalData = {}
 // Function to update global variables
-function updateVariables() {
-  const emailInput = document.getElementById('email')
-  const cityInput = document.getElementById('city')
-  const zipInput = document.getElementById('zip')
-  if (emailInput) {
-    userEmail = emailInput.value
-  }
-  if (cityInput) {
-    userCity = cityInput.value
-  }
-  if (zipInput) {
-    userZip = zipInput.value
-  }
+function updateData(key, value) {
+  globalData[key] = value
 }
+
+// function updateVariables(key, value) {
+//   const emailInput = document.getElementById('email')
+//   const cityInput = document.getElementById('city')
+//   const zipInput = document.getElementById('zip')
+//   if (emailInput) {
+//     userEmail = emailInput.value
+//   }
+//   if (cityInput) {
+//     userCity = cityInput.value
+//   }
+//   if (zipInput) {
+//     userZip = zipInput.value
+//   }
+// }
 // Add event listeners to input boxes
-document.addEventListener('DOMContentLoaded', function() {
-  const emailInput = document.getElementById('email')
-  const cityInput = document.getElementById('city')
-  const zipInput = document.getElementById('zip')
-  updateVariables()
-  if (emailInput) {
-    emailInput.addEventListener('input', updateVariables)
-  }
-  if (cityInput) {
-    cityInput.addEventListener('input', updateVariables)
-  }
-  if (zipInput) {
-    zipInput.addEventListener('input', updateVariables)
-  }
-})
+// document.addEventListener('DOMContentLoaded', function() {
+//   const emailInput = document.getElementById('email')
+//   const cityInput = document.getElementById('city')
+//   const zipInput = document.getElementById('zip')
+//   updateVariables()
+//   // if (emailInput) {
+//   //   emailInput.addEventListener('input', updateVariables)
+//   // }
+//   if (cityInput) {
+//     cityInput.addEventListener('input', updateVariables)
+//   }
+//   if (zipInput) {
+//     zipInput.addEventListener('input', updateVariables)
+//   }
+// })
 
 // Get the cart count element
 const cartCountElement = document.getElementById('cart-count')
@@ -57,8 +63,12 @@ function addToCart(id, name, price) {
   showNotification(`Added ${name} to cart!`)
   saveCartToLocalStorage()
 
+  _pushToDatalayer({
+    name: 'John Doe'
+  })
+
   console.log('add to cart!')
-  window.dataLayer.push({
+  _pushToDatalayer({
     event: 'add_to_cart',
     ecommerce: {
       currency: 'USD',
@@ -138,18 +148,18 @@ function initiateCheckout() {
 
 // Function to complete purchase
 function completePurchase() {
-  const data = _formatPurchaseForDataLayer()
-
+  // console.log(globalData)
+  
   // send data to GTM
-  window.dataLayer.push(data)
+  _pushToDatalayer(_formatPurchaseForDataLayer())
 
   // Clear the cart
   cart = {}
   saveCartToLocalStorage()
-  updateCartCount()
+  // updateCartCount()
 
   // Redirect to the purchase confirmation page
-  window.location.href = 'purchase-confirmation.html'
+  // window.location.href = 'purchase-confirmation.html'
 }
 
 // // Add event listener to the purchase button
@@ -213,6 +223,10 @@ if (document.getElementById('cart-summary-table')) {
   displayCartSummary()
 }
 
+function _pushToDatalayer(data) {
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push(data)
+}
 function _formatPurchaseForDataLayer() {
   const ecommerce = {
     value: 0,
