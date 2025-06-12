@@ -147,8 +147,9 @@ function completePurchase() {
   cart = {}
   saveCartToLocalStorage()
   updateCartCount()
-    // Redirect to the purchase confirmation page
-  // window.location.href = 'purchase-confirmation.html'
+
+  // Redirect to the purchase confirmation page
+  window.location.href = 'purchase-confirmation.html'
 }
 
 // // Add event listener to the purchase button
@@ -213,16 +214,19 @@ if (document.getElementById('cart-summary-table')) {
 }
 
 function _formatPurchaseForDataLayer() {
-  const res = {
+  const ecommerce = {
     value: 0,
     currenty: 'USD',
     contents: []
   }
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
-    res.value += data.price
-    res.contents.push({ id, quantity })
+    ecommerce.value += data.price
+    ecommerce.contents.push({ id, quantity })
   }
 
-  return res
+  return {
+    event: 'purchase',
+    ecommerce
+  }
 }
