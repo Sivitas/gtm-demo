@@ -1,5 +1,6 @@
 let globalData = {}
 
+document.cookie = '_fbc=fb.1.123.IwY2xjawK3G1xle'
 
 // Function to update global variables
 function updateData(key, value) {
