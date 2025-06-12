@@ -63,18 +63,16 @@ function addToCart(id, name, price) {
   showNotification(`Added ${name} to cart!`)
   saveCartToLocalStorage()
 
-  _pushToDatalayer({
-    name: 'John Doe'
-  })
 
   console.log('add to cart!')
   _pushToDatalayer({
     event: 'add_to_cart',
+    firstName: 'john',
     ecommerce: {
       currency: 'USD',
       value: price,
       items: {
-        id,
+        item_id: id,
         item_name: name,
         price,
         quantity: 1
@@ -149,7 +147,7 @@ function initiateCheckout() {
 // Function to complete purchase
 function completePurchase() {
   // console.log(globalData)
-  
+
   // send data to GTM
   _pushToDatalayer(_formatPurchaseForDataLayer())
 
@@ -236,7 +234,7 @@ function _formatPurchaseForDataLayer() {
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
     ecommerce.value += data.price
-    ecommerce.contents.push({ id, quantity })
+    ecommerce.contents.push({ item_id: id, item_name: name, quantity })
   }
 
   return {
