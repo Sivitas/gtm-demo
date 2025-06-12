@@ -51,7 +51,7 @@ function addToCart(id, name, price) {
   if (cart[name]) {
     cart[name].quantity++
   } else {
-    cart[name] = { price, quantity: 1 }
+    cart[name] = { id, price, quantity: 1 }
   }
   updateCartCount()
   showNotification(`Added ${name} to cart!`)
@@ -59,7 +59,7 @@ function addToCart(id, name, price) {
 
   console.log('add to cart!')
   window.dataLayer.push({
-    event: 'AddToCart',
+    event: 'add_to_cart',
     ecommerce: {
       currency: 'USD',
       value: price,
@@ -138,35 +138,23 @@ function initiateCheckout() {
 
 // Function to complete purchase
 function completePurchase() {
+  const data = _formatPurchaseForDataLayer()
 
-  console.log(cart)
   // send data to GTM
-  // window.dataLayer.push({
-  //   event: 'AddToCart',
-  //   ecommerce: {
-  //     currency: 'USD',
-  //     value: price,
-  //     items: {
-  //       id,
-  //       item_name: name,
-  //       price,
-  //       quantity: 1
-  //     }
-  //   }
-  // })
+  window.dataLayer.push(data)
 
   // Clear the cart
   cart = {}
   saveCartToLocalStorage()
   updateCartCount()
     // Redirect to the purchase confirmation page
-  window.location.href = 'purchase-confirmation.html'
+  // window.location.href = 'purchase-confirmation.html'
 }
 
-// Add event listener to the purchase button
-if (document.getElementById('purchase-btn')) {
-  document.getElementById('purchase-btn').addEventListener('click', completePurchase)
-}
+// // Add event listener to the purchase button
+// if (document.getElementById('purchase-btn')) {
+//   document.getElementById('purchase-btn').addEventListener('click', completePurchase)
+// }
 
 function showNotification(message) {
   const notification = document.createElement('div')
@@ -222,4 +210,19 @@ function displayCartSummary() {
 if (document.getElementById('cart-summary-table')) {
   loadCartFromLocalStorage()
   displayCartSummary()
+}
+
+function _formatPurchaseForDataLayer() {
+  const res = {
+    value: 0,
+    currenty: 'USD',
+    contents: []
+  }
+  for (const [name, data] of Object.entries(cart)) {
+    const { id, price, quantity} = data
+    res.value += data.price
+    res.contents.push({ id, quantity })
+  }
+
+  return res
 }
