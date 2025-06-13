@@ -213,7 +213,7 @@ function _formatPurchaseForDataLayer() {
   return dl
 }
 function _injectUserDataDl(dl) {
-  dl.user_data = dl.user_data || []
+  dl.user_data = dl.user_data || {}
   const ud = dl.user_data
 
   ud.firstName = globalData.name?.split(' ')?.[0] || null
@@ -221,5 +221,5 @@ function _injectUserDataDl(dl) {
   ud.email = globalData.email
   ud.city = globalData.city
   ud.state = globalData.state
-  dl.zip = globalData.zip
+  ud.zip = globalData.zip
 }
