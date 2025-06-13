@@ -40,14 +40,16 @@ function addToCart(id, name, price) {
   console.log('add to cart!')
   _pushToDatalayer({
     event: 'add_to_cart',
-    currency: 'USD',
-    value: price,
-    items: [{
-      item_id: id,
-      item_name: name,
-      price,
-      quantity: 1
-    }]
+    ecommerce: {
+      currency: 'USD',
+      value: price,
+      items: [{
+        item_id: id,
+        item_name: name,
+        price,
+        quantity: 1
+      }]
+    }
   })
 }
 
@@ -196,23 +198,28 @@ function _pushToDatalayer(data) {
 function _formatPurchaseForDataLayer() {
   const dl = {
     event: 'purchase',
-    value: 0,
-    currency: 'USD',
-    items: []
+    ecommerce: {
+      value: 0,
+      currency: 'USD',
+      items: []
+    }
   }
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
-    dl.value += data.price
-    dl.items.push({ item_id: id, item_name: name, quantity })
+    dl.ecommerce.value += data.price
+    dl.ecommerce.items.push({ item_id: id, item_name: name, quantity })
   }
 
   return dl
 }
 function _injectUserDataDl(dl) {
-  dl.firstName = globalData.name?.split(' ')?.[0] || null
-  dl.lastName = globalData.name?.split(' ')?.[1] || null
-  dl.email = globalData.email
-  dl.city = globalData.city
-  dl.state = globalData.state
+  dl.user_data = dl.user_data || []
+  const ud = dl.user_data
+
+  ud.firstName = globalData.name?.split(' ')?.[0] || null
+  ud.lastName = globalData.name?.split(' ')?.[1] || null
+  ud.email = globalData.email
+  ud.city = globalData.city
+  ud.state = globalData.state
   dl.zip = globalData.zip
 }
