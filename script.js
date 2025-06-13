@@ -1,7 +1,7 @@
 let globalData = {
   name: 'John Doe',
   email: 'johndoe@example.com',
-  phone: '321-321-3211'
+  phone: '321-321-3211',
   address: '123 Main St',
   city: 'Anytown',
   state: 'CA',
