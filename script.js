@@ -199,7 +199,7 @@ function _pushToDatalayer(data) {
 function _formatPurchaseForDataLayer() {
   const dl = {
     event: 'purchase',
-    random: {
+    ecommerce: {
       value: 0,
       currency: 'USD',
       items: []
@@ -207,8 +207,8 @@ function _formatPurchaseForDataLayer() {
   }
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
-    dl.random.value += data.price
-    dl.random.items.push({ item_id: id, item_name: name, price: data.price, quantity })
+    dl.ecommerce.value += data.price
+    dl.ecommerce.items.push({ item_id: id, item_name: name, price: data.price, quantity })
   }
 
   return dl
