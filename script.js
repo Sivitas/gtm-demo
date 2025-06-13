@@ -1,6 +1,7 @@
 let globalData = {
   name: 'John Doe',
   email: 'johndoe@example.com',
+  phone: '321-321-3211'
   address: '123 Main St',
   city: 'Anytown',
   state: 'CA',
@@ -207,7 +208,7 @@ function _formatPurchaseForDataLayer() {
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
     dl.ecommerce.value += data.price
-    dl.ecommerce.items.push({ item_id: id, item_name: name, quantity })
+    dl.ecommerce.items.push({ item_id: id, item_name: name, price: data.price, quantity })
   }
 
   return dl
@@ -216,9 +217,10 @@ function _injectUserDataDl(dl) {
   dl.user_data = dl.user_data || {}
   const ud = dl.user_data
 
-  ud.firstName = globalData.name?.split(' ')?.[0] || null
-  ud.lastName = globalData.name?.split(' ')?.[1] || null
+  ud.first_name = globalData.name?.split(' ')?.[0] || null
+  ud.last_name = globalData.name?.split(' ')?.[1] || null
   ud.email = globalData.email
+  ud.phone = globalData.phone
   ud.city = globalData.city
   ud.state = globalData.state
   ud.zip = globalData.zip
