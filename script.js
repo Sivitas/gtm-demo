@@ -41,7 +41,7 @@ function addToCart(id, name, price) {
   console.log('add to cart!')
   _pushToDatalayer({
     event: 'add_to_cart',
-    // ecommerce: {
+    ecommerce: {
       currency: 'USD',
       value: price,
       items: [{
@@ -50,7 +50,7 @@ function addToCart(id, name, price) {
         price,
         quantity: 1
       }]
-    // }
+    }
   })
 }
 
@@ -197,35 +197,21 @@ function _pushToDatalayer(data) {
   window.dataLayer.push(data)
 }
 function _formatPurchaseForDataLayer() {
-
   const dl = {
     event: 'purchase',
+    random: {
       value: 0,
       currency: 'USD',
       items: []
+    }
   }
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
-    dl.value += data.price
-    dl.items.push({ item_id: id, item_name: name, price: data.price, quantity })
+    dl.random.value += data.price
+    dl.random.items.push({ item_id: id, item_name: name, price: data.price, quantity })
   }
 
   return dl
-//   const dl = {
-//     event: 'purchase',
-//     ecommerce: {
-//       value: 0,
-//       currency: 'USD',
-//       items: []
-//     }
-//   }
-//   for (const [name, data] of Object.entries(cart)) {
-//     const { id, price, quantity} = data
-//     dl.ecommerce.value += data.price
-//     dl.ecommerce.items.push({ item_id: id, item_name: name, price: data.price, quantity })
-//   }
-
-//   return dl
 }
 function _injectUserDataDl(dl) {
   dl.user_data = dl.user_data || {}
