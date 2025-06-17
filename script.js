@@ -1,32 +1,48 @@
 let globalData = {
   name: 'John Doe',
   email: 'johndoe@example.com',
-  phone: '321-321-3211',
+  // phone: '321-321-3211',
   address: '123 Main St',
   city: 'Anytown',
   state: 'CA',
   zip: '12345'
 }
 
+// Get the cart count element
+const els = {}
+const cartCountElement = document.getElementById('cart-count')
+let cart = {}
+const settings = _loadSettingsFromLocalStorage()
+
+init()
+
 // document.cookie = '_fbc=fb.1.123.IwY2xjawK3G1xle'
+
+
+function init() {
+  // Load the cart from local storage when the page loads
+  _loadCartFromLocalStorage()
+
+  // Display the cart summary when the checkout page loads
+  if (document.getElementById('cart-summary-table')) {
+    _loadCartFromLocalStorage()
+    displayCartSummary()
+  }
+
+  els.gtmAdvancedFormatToggle = document.getElementById('gtmAdvancedFormat')
+  els.gtmAdvancedFormatToggle.checked = settings.gtmAdvancedFormat
+  console.log(els)
+}
 
 // Function to update global variables
 function updateData(key, value) {
   globalData[key] = value
 }
-
-// Get the cart count element
-const cartCountElement = document.getElementById('cart-count')
-
-// Initialize the cart
-let cart = {}
-
 // Function to update the cart count
 function updateCartCount() {
   const cartCount = Object.values(cart).reduce((acc, item) => acc + item.quantity, 0)
   cartCountElement.textContent = cartCount
 }
-
 // Function to add an item to the cart
 function addToCart(id, name, price) {
   if (cart[name]) {
@@ -36,50 +52,41 @@ function addToCart(id, name, price) {
   }
   updateCartCount()
   showNotification(`Added ${name} to cart!`)
-  saveCartToLocalStorage()
+  _saveCartToLocalStorage()
 
-  console.log('add to cart!')
-  _pushToDatalayer({
-    event: 'add_to_cart',
-    ecommerce: {
-      currency: 'USD',
-      value: price,
-      items: [{
-        item_id: id,
-        item_name: name,
-        price,
-        quantity: 1
-      }]
+  let dlEvent = {
+    event: 'add_to_cart'
+  }
+  const ecommerce = {
+    currency: 'USD',
+    value: price,
+    items: [{
+      item_id: id,
+      item_name: name,
+      price,
+      quantity: 1
+    }]
+  }
+  if (settings.gtmAdvancedFormat) {
+    dlEvent.ecommerce = ecommerce
+  } else {
+    dlEvent = {
+      ...dlEvent,
+      ...ecommerce
     }
-  })
-}
+  }
 
+  console.log(dlEvent)
+  _pushToDatalayer(dlEvent)
+}
 // Function to remove an item from the cart
 function removeFromCart(name) {
   if (cart[name]) {
     delete cart[name]
   }
   updateCartCount()
-  saveCartToLocalStorage()
+  _saveCartToLocalStorage()
 }
-
-// Function to save the cart to local storage
-function saveCartToLocalStorage() {
-  localStorage.setItem('cart', JSON.stringify(cart))
-}
-
-// Function to load the cart from local storage
-function loadCartFromLocalStorage() {
-  const storedCart = localStorage.getItem('cart')
-  if (storedCart) {
-    cart = JSON.parse(storedCart)
-    updateCartCount()
-  }
-}
-
-// Load the cart from local storage when the page loads
-loadCartFromLocalStorage()
-
 // Function to display the cart table
 function displayCartTable() {
   const cartTableBody = document.getElementById('cart-body')
@@ -105,18 +112,15 @@ function displayCartTable() {
   const total = getCartTotal()
   document.getElementById('cart-total').textContent = total.toFixed(2)
 }
-
 // Display the cart table when the cart page loads
 if (document.getElementById('cart-table')) {
   displayCartTable()
 }
-
 // Function to initiate checkout
 function initiateCheckout() {
     // Redirect to the checkout page
   window.location.href = 'checkout.html'
 }
-
 // Function to complete purchase
 function completePurchase() {
   // console.log(globalData)
@@ -129,13 +133,12 @@ function completePurchase() {
 
   // Clear the cart
   cart = {}
-  saveCartToLocalStorage()
+  _saveCartToLocalStorage()
   updateCartCount()
 
   // Redirect to the purchase confirmation page
-  window.location.href = 'purchase-confirmation.html'
+  // window.location.href = 'purchase-confirmation.html'
 }
-
 function showNotification(message) {
   const notification = document.createElement('div')
   notification.classList.add('notification')
@@ -150,7 +153,6 @@ function showNotification(message) {
     notification.remove()
   }, 3000)
 }
-
 // Function to get the total value of the cart
 function getCartTotal() {
   let total = 0
@@ -159,7 +161,6 @@ function getCartTotal() {
   }
   return total
 }
-
 // Function to display the cart summary
 function displayCartSummary() {
   const cartSummaryBody = document.getElementById('cart-summary-body')
@@ -186,42 +187,81 @@ function displayCartSummary() {
   const total = getCartTotal()
   document.getElementById('cart-total').textContent = total.toFixed(2)
 }
-// Display the cart summary when the checkout page loads
-if (document.getElementById('cart-summary-table')) {
-  loadCartFromLocalStorage()
-  displayCartSummary()
+function updateGtmAdvancedFormat(ev) {
+  _updateSetting('gtmAdvancedFormat', ev.target.checked)
 }
 
+// private
+function _loadSettingsFromLocalStorage() {
+  const data = localStorage.getItem('settings')
+  if (!data) {
+    return {
+      gtmAdvancedFormat: false
+    }
+  }
+  return JSON.parse(data)
+}
+// Function to load the cart from local storage
+function _loadCartFromLocalStorage() {
+  const storedCart = localStorage.getItem('cart')
+  if (storedCart) {
+    cart = JSON.parse(storedCart)
+    updateCartCount()
+  }
+}
+// Function to save the cart to local storage
+function _saveCartToLocalStorage() {
+  localStorage.setItem('cart', JSON.stringify(cart))
+}
+
+function _updateSetting(key, value) {
+  settings[key] = value
+  localStorage.setItem('settings', JSON.stringify(settings))
+}
 function _pushToDatalayer(data) {
   window.dataLayer = window.dataLayer || []
   window.dataLayer.push(data)
 }
 function _formatPurchaseForDataLayer() {
-  const dl = {
-    event: 'purchase',
-    ecommerce: {
-      value: 0,
-      currency: 'USD',
-      items: []
-    }
+  let dl = {
+    event: 'purchase'
+  }
+  const ecommerce = {
+    value: 0,
+    currency: 'USD',
+    items: []
   }
   for (const [name, data] of Object.entries(cart)) {
     const { id, price, quantity} = data
-    dl.ecommerce.value += data.price
-    dl.ecommerce.items.push({ item_id: id, item_name: name, price: data.price, quantity })
+    ecommerce.value += data.price
+    ecommerce.items.push({ item_id: id, item_name: name, price: data.price, quantity })
+  }
+
+  if (settings.gtmAdvancedFormat) {
+    dl.ecommerce = ecommerce
+  } else {
+    dl = {
+      ...dl,
+      ...ecommerce
+    }
   }
 
   return dl
 }
 function _injectUserDataDl(dl) {
-  dl.user_data = dl.user_data || {}
-  const ud = dl.user_data
+  const ud = dl.user_data || {}
 
   ud.first_name = globalData.name?.split(' ')?.[0] || null
   ud.last_name = globalData.name?.split(' ')?.[1] || null
   ud.email = globalData.email
-  ud.phone = globalData.phone
+  // ud.phone = globalData.phone
   ud.city = globalData.city
   ud.state = globalData.state
   ud.zip = globalData.zip
+
+  if (settings.gtmAdvancedFormat) {
+    dl.user_data = ud
+  } else {
+    Object.assign(dl, ud)
+  }
 }

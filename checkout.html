@@ -6,6 +6,7 @@
     <title>Liverpool Fan Shop - Checkout</title>
     <link id="favicon" rel="icon" href="Liverpool-FC-80s-icon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="switch.css">
 
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -13,7 +14,6 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NCHQKRNR');</script>
 </head>
-
 <body>
     <!-- Google Tag Manager (noscript) should go here-->
     <header>
@@ -25,7 +25,15 @@
             </ul>
         </nav>
     </header>
-
+    <div class="settings">
+        <div class="flex align-center">
+            <div>GTM advanced format </div>
+            <label class="switch">
+              <input type="checkbox" id="gtmAdvancedFormat" onchange="updateGtmAdvancedFormat(event)">
+              <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
     <main>
         <h1>Checkout</h1>
 

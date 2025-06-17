@@ -203,3 +203,11 @@ input[type="text"], input[type="email"] {
     font-size: 16px;
     border: 1px solid #ccc;
 }
+
+.settings {
+    position: absolute;
+}
+.flex {
+    display: flex;
+    align-items: center;
+}

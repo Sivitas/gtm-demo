@@ -6,6 +6,7 @@
     <title>Liverpool Fan Shop - Purchase Confirmation</title>
     <link id="favicon" rel="icon" href="Liverpool-FC-80s-icon.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="switch.css">
 
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -24,6 +25,15 @@
             </ul>
         </nav>
     </header>
+    <div class="settings">
+        <div class="flex align-center">
+            <div>GTM advanced format </div>
+            <label class="switch">
+              <input type="checkbox" id="gtmAdvancedFormat" onchange="updateGtmAdvancedFormat(event)">
+              <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
     <main>
         <h1>Purchase Confirmation</h1>
         <p>Thank you for your purchase!</p>
