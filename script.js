@@ -137,7 +137,7 @@ function completePurchase() {
   updateCartCount()
 
   // Redirect to the purchase confirmation page
-  // window.location.href = 'purchase-confirmation.html'
+  window.location.href = 'purchase-confirmation.html'
 }
 function showNotification(message) {
   const notification = document.createElement('div')
